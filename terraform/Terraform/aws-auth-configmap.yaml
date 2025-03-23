@@ -1,0 +1,21 @@
+//Aunque hayas dado permisos IAM, EKS también necesita saber que este rol puede acceder al cluster. Para ello, agrega el rol ec2-manager-role en el ConfigMap aws-auth.
+
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::277707108897:role/ec2-manager-role
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:masters
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::277707108897:role/worker-nodes-role
+      username: system:node:{{EC2PrivateDNSName}}
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-03-19T18:13:12Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "129266"
+  uid: ed40497f-359a-4251-b888-b5309e463a3c
