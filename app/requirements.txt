@@ -1,0 +1,4 @@
+Django==3.1.12  # Downgrade to Django 3.2.x
+djongo==1.3.7   # Use the latest version of Djongo
+pymongo==3.11.4  # Required by Djongo
+pytz==2025.1    # Required by Djongo
