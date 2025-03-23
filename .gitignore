@@ -1,0 +1,27 @@
+.terraform
+*.bk
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+
+# Ignorar entornos virtuales (si usas virtualenv o venv)
+env/
+venv/
+*.env
+
+# Ignorar archivos de configuración de Docker
+**/.env
+
+
+# Ignorar archivos sensibles como credenciales
+*.pem
+*.key
+*.crt
+
