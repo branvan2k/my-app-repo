@@ -1,5 +1,15 @@
+/* Estilos generales */
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #F4F9FB;  /* Fondo claro, tipo gris azulado */
+    color: #333;  /* Color de texto principal, más oscuro para legibilidad */
+    margin: 0;
+    padding: 0;
+}
+
+/* Encabezado */
 .page-header {
-    background-color: #C25100;
+    background-color: #005f73;  /* Verde azulado */
     margin-top: 0;
     padding: 20px 20px 20px 40px;
 }
@@ -10,37 +20,97 @@
     text-decoration: none;
 }
 
+/* Contenido */
 .content {
     margin-left: 40px;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
+/* Estilo de los títulos */
 h1, h2, h3, h4 {
-    font-family: 'Lobster', cursive;
+    font-family: 'Roboto', sans-serif;  /* Tipografía más moderna */
+    font-weight: 700;
+    color: #1a202c;  /* Color oscuro para los encabezados */
 }
 
+/* Fechas */
 .date {
-    color: #FCA205;
+    color: #0A74DA;  /* Azul para fechas */
+    font-style: italic;
 }
 
+/* Botón de guardar (flotante) */
 .save {
     float: right;
+    background-color: #0288d1;  /* Azul oscuro */
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
 }
 
+.save:hover {
+    background-color: #02669a;  /* Azul más oscuro al pasar el mouse */
+}
+
+/* Formulario de publicación */
 .post-form textarea, .post-form input {
     width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
+/* Menú superior */
 .top-menu, .top-menu:hover, .top-menu:visited {
     color: #ffffff;
     float: right;
-    font-size: 26pt;
+    font-size: 18pt;
     margin-right: 20px;
+    text-decoration: none;
 }
 
+.top-menu:hover {
+    color: #02c39a;  /* Verde menta suave */
+}
+
+/* Estilo de los posts */
 .post {
     margin-bottom: 70px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .post h2 a, .post h2 a:visited {
-    color: #000000;
+    color: #2b2d42;  /* Gris oscuro */
+    font-size: 22px;
+    text-decoration: none;
 }
+
+.post h2 a:hover {
+    color: #0A74DA;  /* Azul para enlaces en los títulos */
+}
+
+/* Pie de página y secciones menores */
+footer {
+    background-color: #003f5c;  /* Azul oscuro para el pie de página */
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+}
+
+footer a {
+    color: #02c39a;  /* Verde menta */
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
