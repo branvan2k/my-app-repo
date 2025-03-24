@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: blog-admin-binding  # Any unique name
+subjects:
+- kind: ServiceAccount
+  name: default  # The service account running your container
+  namespace: default  # Namespace where the pod runs
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin  # Grants full cluster-wide permissions
+  apiGroup: rbac.authorization.k8s.io
+
