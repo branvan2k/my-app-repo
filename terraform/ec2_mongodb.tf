@@ -13,40 +13,6 @@ resource "aws_instance" "mongodb-instance" {
               #!/bin/bash
               set -e
 
-              # Definir variables sensibles en /etc/environment
-              echo "DB_NAME=blogdb" >> /etc/environment
-              echo "DB_USER=adminUser" >> /etc/environment
-              echo "DB_PASSWD=StrongPassword123" >> /etc/environment
-              echo "DB_HOST=${aws_instance.mongodb-instance.private_ip}" >> /etc/environment
-              source /etc/environment
-
-              # Crear directorio de scripts
-              mkdir -p /opt/scripts
-              cd /opt/scripts
-
-              # Crear script de backup
-              cat << 'EOL' > backup_db.sh
-              #!/bin/bash
-              source /etc/environment
-              BUCKET_NAME="backup-bucket-aff"
-              TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-              BACKUP_DIR="/tmp/mongo_backups"
-              BACKUP_FILE="$BACKUP_DIR/mongo_backup_$TIMESTAMP.tar.gz"
-              mkdir -p $BACKUP_DIR
-              mongodump --uri="mongodb://$DB_USER:$DB_PASSWD@$DB_ADDRESS:27017/$DB_NAME?authSource=admin" --out $BACKUP_DIR/mongo_dump_$TIMESTAMP
-              tar -czf $BACKUP_FILE -C $BACKUP_DIR mongo_dump_$TIMESTAMP
-              aws s3 cp $BACKUP_FILE s3://$BUCKET_NAME/
-              find $BACKUP_DIR -type f -name "*.tar.gz" -mtime +7 -exec rm {} \;
-              echo "Backup realizado y subido a S3: $BACKUP_FILE"
-              EOL
-
-              # Dar permisos de ejecución
-              chmod +x /opt/scripts/backup_db.sh
-
-              # Programar en crontab para ejecutarlo todas las noches a las 2 AM
-              (crontab -l 2>/dev/null; echo "0 2 * * * /opt/scripts/backup_db.sh >> /var/log/backup.log 2>&1") | crontab -
-
-
               # Actualizar el sistema
               apt update -y && apt upgrade -y
               
@@ -76,6 +42,49 @@ resource "aws_instance" "mongodb-instance" {
               # Iniciar y habilitar MongoDB
               systemctl start mongod
               systemctl enable mongod
+
+              # Obtener la IP privada de la instancia MongoDB
+              DB_HOST=$(hostname -I | awk '{print $1}')
+
+              # Modificar la configuración de MongoDB para bindIp
+              sed -i "s/^ *bindIp:.*/  bindIp: $DB_HOST/" /etc/mongod.conf
+
+              # Reiniciar MongoDB para aplicar los cambios
+              systemctl restart mongod
+
+              # Definir variables sensibles en /etc/environment
+              echo "DB_NAME=blogdb" >> /etc/environment
+              echo "DB_USER=adminUser" >> /etc/environment
+              echo "DB_PASSWD=StrongPassword123" >> /etc/environment
+              echo "DB_AUTH=admin" >> /etc/environment
+              echo "DB_HOST=$(hostname -I | awk '{print $1}') >> /etc/environment
+              source /etc/environment
+
+              # Crear directorio de scripts
+              mkdir -p /opt/scripts
+              cd /opt/scripts
+
+              # Crear script de backup
+              cat << 'EOL' > backup_db.sh
+              #!/bin/bash
+              source /etc/environment
+              BUCKET_NAME="backup-bucket-aff"
+              TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+              BACKUP_DIR="/tmp/mongo_backups"
+              BACKUP_FILE="$BACKUP_DIR/mongo_backup_$TIMESTAMP.tar.gz"
+              mkdir -p $BACKUP_DIR
+              mongodump --uri="mongodb://$DB_USER:$DB_PASSWD@$DB_ADDRESS:27017/$DB_NAME?authSource=admin" --out $BACKUP_DIR/mongo_dump_$TIMESTAMP
+              tar -czf $BACKUP_FILE -C $BACKUP_DIR mongo_dump_$TIMESTAMP
+              aws s3 cp $BACKUP_FILE s3://$BUCKET_NAME/
+              find $BACKUP_DIR -type f -name "*.tar.gz" -mtime +7 -exec rm {} \;
+              echo "Backup realizado y subido a S3: $BACKUP_FILE"
+              EOL
+
+              # Dar permisos de ejecución
+              chmod +x /opt/scripts/backup_db.sh
+
+              # Programar en crontab para ejecutarlo todas las noches a las 2 AM
+              (crontab -l 2>/dev/null; echo "0 2 * * * /opt/scripts/backup_db.sh >> /var/log/backup.log 2>&1") | crontab -
 
               EOF
 
