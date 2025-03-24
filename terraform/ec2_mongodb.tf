@@ -6,7 +6,8 @@ resource "aws_instance" "mongodb-instance" {
   subnet_id              = aws_subnet.public_subnet_1.id
   key_name               = var.PUB_KEY
   vpc_security_group_ids = [aws_security_group.ec2_sg.id, aws_security_group.mongo_sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2_backup_profile.name
+ // iam_instance_profile   = aws_iam_instance_profile.ec2_backup_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.mongo_admin_profile.name  
 
 
   user_data = <<-EOF
